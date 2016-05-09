@@ -4,12 +4,12 @@ version := Common.version
 
 scalaVersion := Common.scalaVersion
 
-lazy val core =  project.in( file("module-code") ).enablePlugins(PlayScala)
+lazy val coreSecureSocial =  project.in( file("module-code") ).enablePlugins(PlayScala)
 
-lazy val scalaDemo = project.in( file("samples/scala/demo") ).enablePlugins(PlayScala).dependsOn(core)
+lazy val scalaDemoSecureSocial = project.in( file("samples/scala/demo") ).enablePlugins(PlayScala).dependsOn(coreSecureSocial)
 
-lazy val javaDemo = project.in( file("samples/java/demo") ).enablePlugins(PlayJava).dependsOn(core)
+lazy val javaDemoSecureSocial = project.in( file("samples/java/demo") ).enablePlugins(PlayJava).dependsOn(coreSecureSocial)
 
-lazy val root = project.in( file(".") ).aggregate(core, scalaDemo, javaDemo) .settings(
+lazy val rootSecureSocial = project.in( file(".") ).aggregate(coreSecureSocial, scalaDemoSecureSocial, javaDemoSecureSocial) .settings(
      aggregate in update := false
    )
