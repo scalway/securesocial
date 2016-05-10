@@ -71,7 +71,7 @@ class UsernamePasswordProviderSpec extends PlaySpecification with Mockito {
     def before = {
       viewTemplates.getLoginPage(any[Form[(String, String)]], any[Option[String]])(any[RequestHeader], any[Lang]) returns Html("login page")
       userService.find(upp.id, "foo@bar.com") returns Future(Some(basicProfileFor(User("foo@bar.com", "password"))))
-      passwordHashers.get("bcrypt") returns Some(new PasswordHasher.Default(12))
+      passwordHashers.get("bcrypt") returns Some(new PasswordHasher.Default())
       avatarService.urlFor("foo@bar.com") returns Future(None)
     }
 
