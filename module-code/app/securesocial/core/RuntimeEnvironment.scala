@@ -1,5 +1,7 @@
 package securesocial.core
 
+import play.api.Configuration
+import play.api.i18n.MessagesApi
 import securesocial.controllers.{ MailTemplates, ViewTemplates }
 import securesocial.core.authenticator._
 import securesocial.core.providers._
@@ -42,6 +44,10 @@ trait RuntimeEnvironment {
   def userService: UserService[U]
 
   implicit def executionContext: ExecutionContext
+
+  def messagesApi: MessagesApi
+
+  def configuration: Configuration
 }
 
 object RuntimeEnvironment {

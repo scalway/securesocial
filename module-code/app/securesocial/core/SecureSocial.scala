@@ -16,11 +16,9 @@
  */
 package securesocial.core
 
-import javax.inject.Inject
-
-import play.api.Application
+import play.api.Configuration
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{ I18nSupport, Messages, MessagesApi }
 import play.api.libs.json.Json
 import play.api.mvc.{ Result, _ }
 import play.twirl.api.Html
@@ -35,21 +33,23 @@ import scala.concurrent.{ ExecutionContext, Future }
  * if available.
  *
  */
-trait SecureSocial extends Controller {
+trait SecureSocial extends Controller with I18nSupport {
   implicit val env: RuntimeEnvironment
 
   implicit def executionContext: ExecutionContext = env.executionContext
 
   protected val notAuthenticatedJson = Unauthorized(Json.toJson(Map("error" -> "Credentials required"))).as(JSON)
-  @Inject
-  implicit var messages: Messages = null
+
+  implicit lazy val messagesApi: MessagesApi = env.messagesApi
+
+  implicit lazy val configuration: Configuration = env.configuration
 
   protected def notAuthenticatedResult[A](implicit request: Request[A]): Future[Result] = {
     Future.successful {
       render {
         case Accepts.Json() => notAuthenticatedJson
         case Accepts.Html() => Redirect(env.routes.loginPageUrl).
-          flashing("error" -> messages("securesocial.loginRequired"))
+          flashing("error" -> Messages("securesocial.loginRequired"))
           .withSession(request.session + (SecureSocial.OriginalUrlKey -> request.uri))
         case _ => Unauthorized("Credentials required")
       }
@@ -206,11 +206,8 @@ object SecureSocial {
     }
   }
 
-  @Inject
-  implicit var application: Application = null
-
-  val enableRefererAsOriginalUrl = {
-    application.configuration.getBoolean("securesocial.enableRefererAsOriginalUrl").getOrElse(false)
+  def enableRefererAsOriginalUrl(implicit configuration: Configuration) = {
+    configuration.getBoolean("securesocial.enableRefererAsOriginalUrl").getOrElse(false)
   }
 
   /**

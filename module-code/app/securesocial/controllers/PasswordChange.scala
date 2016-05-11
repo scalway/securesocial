@@ -35,7 +35,9 @@ import scala.concurrent.{ Await, Future }
  *
  * @param env An environment
  */
-class PasswordChange @Inject() (override implicit val env: RuntimeEnvironment) extends BasePasswordChange
+class PasswordChange @Inject()(override implicit val env: RuntimeEnvironment,
+                               override implicit val CSRFCheck: CSRFCheck,
+                               override implicit val CSRFAddToken: CSRFAddToken) extends BasePasswordChange
 
 /**
  * A trait that defines the password change functionality
@@ -56,10 +58,8 @@ trait BasePasswordChange extends SecureSocial {
    */
   val onPasswordChangeGoTo = "securesocial.onPasswordChangeGoTo"
 
-  @Inject
-  implicit var application: Application = null
   /** The redirect target of the handlePasswordChange action. */
-  def onHandlePasswordChangeGoTo = application.configuration.getString(onPasswordChangeGoTo).getOrElse(
+  def onHandlePasswordChangeGoTo = configuration.getString(onPasswordChangeGoTo).getOrElse(
     securesocial.controllers.routes.PasswordChange.page().url
   )
 
@@ -106,8 +106,7 @@ trait BasePasswordChange extends SecureSocial {
     }
   }
 
-  @Inject
-  implicit var CSRFAddToken: CSRFAddToken = null
+  implicit val CSRFAddToken: CSRFAddToken
 
   /**
    * Renders the password change page
@@ -124,8 +123,7 @@ trait BasePasswordChange extends SecureSocial {
     }
   }
 
-  @Inject
-  implicit var CSRFCheck: CSRFCheck = null
+  implicit val CSRFCheck: CSRFCheck
 
   /**
    * Handles form submission from the password change page
@@ -143,10 +141,10 @@ trait BasePasswordChange extends SecureSocial {
             env.userService.updatePasswordInfo(request.user, newPasswordInfo).map {
               case Some(u) =>
                 env.mailer.sendPasswordChangedNotice(u)(request, userLang)
-                val result = Redirect(onHandlePasswordChangeGoTo).flashing(Success -> Messages(OkMessage)(messages))
+                val result = Redirect(onHandlePasswordChangeGoTo).flashing(Success -> Messages(OkMessage))
                 Events.fire(new PasswordChangeEvent(request.user)).map(result.withSession).getOrElse(result)
               case None =>
-                Redirect(onHandlePasswordChangeGoTo).flashing(Error -> Messages("securesocial.password.error")(messages))
+                Redirect(onHandlePasswordChangeGoTo).flashing(Error -> Messages("securesocial.password.error"))
             }
           }
         )
