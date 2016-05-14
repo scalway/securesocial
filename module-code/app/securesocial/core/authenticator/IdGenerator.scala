@@ -42,9 +42,7 @@ object IdGenerator {
     val random = new SecureRandom()
     val DefaultSizeInBytes = 128
     val IdLengthKey = "securesocial.idLengthInBytes"
-    @Inject
-    implicit var application: Application = null
-    val IdSizeInBytes = application.configuration.getInt(IdLengthKey).getOrElse(DefaultSizeInBytes)
+    val IdSizeInBytes = play.Play.application().configuration.getInt(IdLengthKey, DefaultSizeInBytes)
 
     /**
      * Generates a new id using SecureRandom

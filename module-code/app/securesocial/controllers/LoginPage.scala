@@ -31,8 +31,8 @@ import scala.concurrent.Future
  *
  * @param env An environment
  */
-class LoginPage @Inject()(override implicit val env: RuntimeEnvironment,
-                          override implicit val CSRFAddToken: CSRFAddToken) extends BaseLoginPage
+class LoginPage @Inject() (override implicit val env: RuntimeEnvironment,
+  override implicit val CSRFAddToken: CSRFAddToken) extends BaseLoginPage
 
 /**
  * The trait that defines the login page controller

@@ -35,9 +35,9 @@ import scala.concurrent.{ Await, Future }
  *
  * @param env An environment
  */
-class PasswordChange @Inject()(override implicit val env: RuntimeEnvironment,
-                               override implicit val CSRFCheck: CSRFCheck,
-                               override implicit val CSRFAddToken: CSRFAddToken) extends BasePasswordChange
+class PasswordChange @Inject() (override implicit val env: RuntimeEnvironment,
+  override implicit val CSRFCheck: CSRFCheck,
+  override implicit val CSRFAddToken: CSRFAddToken) extends BasePasswordChange
 
 /**
  * A trait that defines the password change functionality
